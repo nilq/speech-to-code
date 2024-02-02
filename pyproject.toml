@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "speech-to-code"
+version = "0.1.0"
+description = "Using HuggingFace to code without hands."
+authors = ["Niels Horn <niels@horn.ninja>"]
+license = "MIT license"
+readme = "README.md"
+packages = [{include = "speech_to_code", from="src"}]
+
+[tool.poetry.dependencies]
+python = "~3.11"
+fastapi = "^0.109.0"
+transformers = "^4.37.2"
+torchaudio = "^2.2.0"
+accelerate = "^0.26.1"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+ruff = "^0.1.15"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
