@@ -43,6 +43,7 @@ jobs:
   deploy:
     name: "Deploy to Azure Kubernetes Service cluster"
     runs-on: ubuntu-latest
+    needs: build
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -51,9 +52,7 @@ jobs:
         id: login
         uses: azure/login@v1
         with:
-          client-id: ${{ env.client-id }}
-          tenant-id: ${{ env.tenant-id }}
-          subscription-id: ${{ env.subscription-id }}
+          creds: "${{ secrets.AZURE_CREDS }}"
 
       - name: Install Kubernetes Command-line Tool (kubectl)
         uses: azure/setup-kubectl@v3
