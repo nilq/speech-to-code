@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: speech-to-code
 spec:
+  progressDeadlineSeconds: 60
   replicas: 1
   selector:
     matchLabels:
@@ -13,11 +14,25 @@ spec:
         app: speech-to-code
     spec:
       containers:
-        - name: fastapi
+        - name: speech-to-code
           image: acrspeechtocode.azurecr.io/api:a4bb54d042ced6cdc6aea931790e6c68680ec3af
           ports:
             - containerPort: 8000
           readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          startupProbe:
             httpGet:
               path: /health
               port: 8000
