@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "speech-to-code-api"
+version = "0.1.0"
+description = "Speech-to-code API."
+authors = ["Niels Horn <niels@horn.ninja>"]
+license = "MIT license"
+readme = "README.md"
+packages = [{include = "api"}]
+
+[tool.poetry.scripts]
+start = "api.main:start"
+
+[tool.poetry.dependencies]
+python = "~3.11"
+fastapi = "^0.109.1"
+python-multipart = "^0.0.7"
+uvicorn = "^0.27.0.post1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

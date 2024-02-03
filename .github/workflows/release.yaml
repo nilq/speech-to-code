@@ -1,0 +1,73 @@
+name: Deploy to Azure
+
+env:
+  registry-name: acrspeechtocode
+  tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+  subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  client-id: ${{ secrets.AZURE_CLIENT_ID }}
+
+  acr-login-server: ${{ secrets.ACR_LOGIN_SERVER }}
+  acr-username: ${{ secrets.ACR_USERNAME }}
+  acr-password: ${{ secrets.ACR_PASSWORD }}
+
+  resource-group: speech-to-code
+  cluster-name: speech-to-code
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    name: Build and push image to Azure Container Registry
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: "Docker Login"
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ env.acr-login-server }}
+          username: ${{ env.acr-username }}
+          password: ${{ env.acr-password }}
+
+      - name: "Build and push image"
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: ${{ env.acr-login-server }}/api:${{ github.sha }}
+          file: api/docker/Dockerfile
+          context: api
+
+  deploy:
+    name: "Deploy to Azure Kubernetes Service cluster"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Azure CLI login
+        id: login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ env.client-id }}
+          tenant-id: ${{ env.tenant-id }}
+          subscription-id: ${{ env.subscription-id }}
+
+      - name: Install Kubernetes Command-line Tool (kubectl)
+        uses: azure/setup-kubectl@v3
+
+      - uses: Azure/aks-set-context@v1
+        with:
+          creds: "${{ secrets.AZURE_CREDS }}"
+          cluster-name: ${{ env.cluster-name }}
+          resource-group: ${{ env.resource-group }}
+
+      - name: Deploy to cluster
+        uses: Azure/k8s-deploy@v4
+        with:
+          manifests: |
+            api/deployment.yaml
+          images: ${{ env.acr-login-server }}/api:${{ github.sha }}
+          pull-images: false

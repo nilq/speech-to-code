@@ -9,7 +9,6 @@ packages = [{include = "speech_to_code", from="src"}]
 
 [tool.poetry.dependencies]
 python = "~3.11"
-fastapi = "^0.109.0"
 transformers = "^4.37.2"
 torchaudio = "^2.2.0"
 accelerate = "^0.26.1"
