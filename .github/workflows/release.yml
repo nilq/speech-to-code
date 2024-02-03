@@ -13,6 +13,10 @@ env:
   resource-group: speech-to-code
   cluster-name: speech-to-code
 
+permissions:
+  contents: read
+  id-token: write
+
 on:
   release:
     types: [published]
@@ -44,9 +48,6 @@ jobs:
     name: "Deploy to Azure Kubernetes Service cluster"
     runs-on: ubuntu-latest
     needs: build
-    permissions:
-      contents: read
-      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v3
