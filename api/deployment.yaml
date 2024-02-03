@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: speech-to-code
 spec:
-  progressDeadlineSeconds: 60
+  progressDeadlineSeconds: 300
   replicas: 1
   selector:
     matchLabels:
