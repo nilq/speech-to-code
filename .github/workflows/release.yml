@@ -47,12 +47,7 @@ jobs:
     permissions: write-all
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Azure CLI login
-        uses: azure/login@v1
-        with:
-          creds: "${{ secrets.AZURE_CREDS }}"
+        uses: actions/checkout@v4
 
       - name: Install Kubernetes Command-line Tool (kubectl)
         uses: azure/setup-kubectl@v3
