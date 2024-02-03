@@ -63,7 +63,6 @@ jobs:
 
       - uses: Azure/aks-set-context@v1
         with:
-          creds: "${{ secrets.AZURE_CREDS }}"
           cluster-name: ${{ env.cluster-name }}
           resource-group: ${{ env.resource-group }}
 
