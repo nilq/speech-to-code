@@ -54,7 +54,9 @@ jobs:
       - name: Azure CLI login
         uses: azure/login@v1
         with:
-          creds: "${{ secrets.AZURE_CREDS }}"
+          client-id: ${{ env.client-id }}
+          tenant-id: ${{ env.tenant-id }}
+          subscription-id: ${{ env.subscription-id }}
 
       - name: Install Kubernetes Command-line Tool (kubectl)
         uses: azure/setup-kubectl@v3
