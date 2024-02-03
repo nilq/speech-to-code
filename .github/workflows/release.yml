@@ -61,7 +61,7 @@ jobs:
       - name: Install Kubernetes Command-line Tool (kubectl)
         uses: azure/setup-kubectl@v3
 
-      - uses: Azure/aks-set-context@v1
+      - uses: azure/aks-set-context@v3
         with:
           cluster-name: ${{ env.cluster-name }}
           resource-group: ${{ env.resource-group }}
