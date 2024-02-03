@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: speech-to-code
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: speech-to-code
+  template:
+    metadata:
+      labels:
+        app: speech-to-code
+    spec:
+      containers:
+        - name: fastapi
+          image: acrspeechtocode.azurecr.io/api:a4bb54d042ced6cdc6aea931790e6c68680ec3af
+          ports:
+            - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            periodSeconds: 10
+            failureThreshold: 30
