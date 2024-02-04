@@ -33,19 +33,19 @@ async def speak(audio: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="Invalid file type. Only WAV files are accepted.")
 
     try:
+        queue_client.create_queue()
+        print("CREATED QUEUE?")
         queue_client.send_message("hello")
+        print("Sent hello.")
     except Exception as e:
-        print(e)
-
-    try:
-        queue_service_client.put_message(queue_name, "hello")
-    except Exception as e:
-        print(e)
+        print("ERROR:", e)
 
     # Propagate speech to blob storage.
     blob_client = blob_service_client.get_blob_client(container="content", blob=f"{random_audio_file_name()}.wav")
     audio_file = await audio.read()
     await blob_client.upload_blob(audio_file, blob_type="BlockBlob")
+
+    print("Uploaded blob.", blob_client.url)
 
     # Send work message to queue.
     queue_client.send_message(blob_client.url)

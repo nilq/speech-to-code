@@ -4,6 +4,7 @@ from azure.storage.blob.aio import BlobServiceClient
 from azure.identity import DefaultAzureCredential
 from azure.storage.queue import QueueServiceClient
 
+import time
 
 credential = DefaultAzureCredential(managed_identity_client_id="f1fa9ae3-9815-465f-8a41-26a731203e31")
 
@@ -24,6 +25,8 @@ def process_queue(queue_name: str = "speechprocessing"):
             file_url = message.content
             print(f"Received message: {file_url!r}")
             queue_client.delete_message(message)
+
+        time.sleep(1)
 
 def start() -> None:
     print("Starting queue processing.")
