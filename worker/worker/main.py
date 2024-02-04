@@ -11,9 +11,13 @@ storage_account_url = "https://speech46c96a79acf72d79.blob.core.windows.net"
 blob_service_client = BlobServiceClient(account_url=storage_account_url, credential=credential)
 queue_service_client = QueueServiceClient(account_url=storage_account_url, credential=credential)
 
-blob_client = blob_service_client.get_blob_client(container="content", blob="testfromworker")
-with open(__file__, "rb") as data:
-    asyncio.run(blob_client.upload_blob(data))
+
+try:
+    blob_client = blob_service_client.get_blob_client(container="content", blob="testfromworker")
+    with open(__file__, "rb") as data:
+        asyncio.run(blob_client.upload_blob(data))
+except:
+    print("Continuing tests.")
 
 
 async def process_queue():
