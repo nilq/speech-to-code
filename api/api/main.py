@@ -7,7 +7,7 @@ from azure.identity import DefaultAzureCredential
 
 import asyncio
 
-credential = DefaultAzureCredential()
+credential = DefaultAzureCredential(managed_identity_client_id="f1fa9ae3-9815-465f-8a41-26a731203e31")
 storage_account_url = "https://speech46c96a79acf72d79.blob.core.windows.net"
 blob_service_client = BlobServiceClient(account_url=storage_account_url, credential=credential)
 
