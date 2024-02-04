@@ -1,7 +1,7 @@
 import uvicorn
 import os
 
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, HTTPException
 from azure.storage.blob.aio import BlobServiceClient
 from azure.identity import DefaultAzureCredential
 from azure.storage.queue import QueueServiceClient
@@ -25,11 +25,14 @@ def random_audio_file_name() -> str:
 
 @app.post("/speech")
 async def speak(audio: UploadFile = File(...)):
-    # TODO: Error when not WAV. That's the only thing we want.
+    if not audio.filename.endswith(".wav"):
+        raise HTTPException(status_code=400, detail="Invalid file type. Only WAV files are accepted.")
 
     # Propagate speech to blob storage.
     blob_client = blob_service_client.get_blob_client(container="speech", blob=random_audio_file_name)
-    await blob_client.upload_blob(audio.file.read())
+
+    async with audio.file as file:
+        await blob_client.upload_blob(file, blob_type="BlockBlob")
 
     # Send work message to queue.
     queue_client = queue_service_client.get_queue_client(queue_name)

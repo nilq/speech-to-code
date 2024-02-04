@@ -21,7 +21,7 @@ class SpeechToText:
         )
         self.processor = WhisperProcessor.from_pretrained(model_id)
 
-    def speech_to_text(self, file_path: str) -> str:
+    def convert(self, file_path: str) -> str:
         waveform_audio_data = load_and_resample_audio(file_path=file_path, sampling_rate=WHISPER_SAMPLE_RATE)
         input_features = self.processor(
             waveform_audio_data.squeeze(),
@@ -49,7 +49,7 @@ class TextToCode:
         )
         self.tokenizer = AutoTokenizer.from_pretrained("microsoft/phi-2", trust_remote_code=True)
 
-    def text_to_code(self, text: str, max_length: int = 512) -> str | None:
+    def convert(self, text: str, max_length: int = 512) -> str | None:
         final_prompt = TextToCode.PROMPT.substitute(code_description=text)
 
         inputs = self.tokenizer(final_prompt, return_tensors="pt", return_attention_mask=False)
@@ -65,9 +65,9 @@ class SpeechToCode:
         speech_to_text: SpeechToText,
         text_to_code: TextToCode
     ) -> None:
-        self.speech_to_text = speech_to_text.speech_to_text
-        self.text_to_code = text_to_code.text_to_code
+        self.speech_to_text = speech_to_text
+        self.text_to_code = text_to_code
 
-    def speech_to_code(self, file_path: str) -> str | None:
-        text: str = self.speech_to_text(file_path=file_path)
-        return self.text_to_code(text=text)
+    def convert(self, file_path: str, max_code_length: int = 512) -> str | None:
+        text: str = self.speech_to_text.convert(file_path=file_path)
+        return self.text_to_code.convert(text=text, max_length=max_code_length)
