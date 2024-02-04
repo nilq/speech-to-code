@@ -12,7 +12,7 @@ WORKDIR /usr/src/worker
 
 RUN pip install poetry \
     && poetry config virtualenvs.create false \
-    && poetry install --no-dev
+    && poetry install --no-dev --no-root
 
 ENV PATH /root/.local/bin:$PATH
 RUN python3.11 -m venv .venv/ \

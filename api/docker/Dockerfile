@@ -14,7 +14,7 @@ RUN pip install poetry \
 
 ENV PATH /root/.local/bin:$PATH
 RUN python3.11 -m venv .venv/ \
-    && poetry install --no-interaction --no-ansi
+    && poetry install --no-interaction --no-ansi --no-root
 
 EXPOSE 8000
 
