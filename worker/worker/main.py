@@ -26,4 +26,5 @@ def process_queue(queue_name: str = "speechprocessing"):
             queue_client.delete_message(message)
 
 def start() -> None:
+    print("Starting queue processing.")
     process_queue()

@@ -18,8 +18,8 @@ blob_service_client = BlobServiceClient(account_url=storage_blob_account_url, cr
 
 
 queue_service_client = QueueServiceClient(account_url=storage_queue_account_url, credential=credential)
-
 queue_name = "speechprocessing"
+queue_client = queue_service_client.get_queue_client(queue_name)
 
 app = FastAPI()
 
@@ -33,10 +33,14 @@ async def speak(audio: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="Invalid file type. Only WAV files are accepted.")
 
     try:
-        queue_client = queue_service_client.get_queue_client(queue_name)
         queue_client.send_message("hello")
-    except:
-        pass
+    except Exception as e:
+        print(e)
+
+    try:
+        queue_service_client.put_message(queue_name, "hello")
+    except Exception as e:
+        print(e)
 
     # Propagate speech to blob storage.
     blob_client = blob_service_client.get_blob_client(container="content", blob=f"{random_audio_file_name()}.wav")
@@ -44,7 +48,6 @@ async def speak(audio: UploadFile = File(...)):
     await blob_client.upload_blob(audio_file, blob_type="BlockBlob")
 
     # Send work message to queue.
-    queue_client = queue_service_client.get_queue_client(queue_name)
     queue_client.send_message(blob_client.url)
 
 
