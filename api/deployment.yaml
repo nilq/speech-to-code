@@ -35,11 +35,13 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: speech-to-code-ingress
+  annotations:
+    kubernetes.io/ingress.class: addon-http-application-routing
 spec:
   rules:
     - http:
         paths:
-          - path: /speech-to-code
+          - path: /
             pathType: Prefix
             backend:
               service:
