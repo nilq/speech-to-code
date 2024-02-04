@@ -1,25 +1,19 @@
 [tool.poetry]
-name = "speech-to-code-api"
+name = "worker"
 version = "0.1.0"
-description = "Speech-to-code API."
+description = "Speech-to-code worker."
 authors = ["Niels Horn <niels@horn.ninja>"]
 license = "MIT license"
 readme = "README.md"
-packages = [{include = "api"}]
 
 [tool.poetry.scripts]
-start = "api.main:start"
+start = "worker.main:start"
 
 [tool.poetry.dependencies]
 python = "~3.11"
-fastapi = "^0.109.1"
-python-multipart = "^0.0.7"
-uvicorn = "^0.27.0.post1"
-azure-identity = "^1.15.0"
-azure-storage-blob = "^12.19.0"
-aiohttp = "^3.9.3"
-asyncio = "^3.4.3"
+speech-to-code = {path = ".."}
 azure-storage-queue = "^12.9.0"
+azure-storage-blob = "^12.19.0"
 
 
 [build-system]

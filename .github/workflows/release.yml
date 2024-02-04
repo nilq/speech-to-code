@@ -19,7 +19,7 @@ on:
 
 jobs:
   build:
-    name: Build and push image to Azure Container Registry
+    name: Build and push images
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -32,13 +32,21 @@ jobs:
           username: ${{ env.acr-username }}
           password: ${{ env.acr-password }}
 
-      - name: "Build and push image"
+      - name: "Build and push API image"
         uses: docker/build-push-action@v5
         with:
           push: true
           tags: ${{ env.acr-login-server }}/api:${{ github.sha }}
           file: api/docker/Dockerfile
           context: api
+
+      - name: "Build and push worker image"
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: ${{ env.acr-login-server }}/worker:${{ github.sha }}
+          file: worker/docker/Dockerfile
+          context: worker
 
   deploy:
     name: "Deploy to Azure Kubernetes Service cluster"
@@ -70,6 +78,9 @@ jobs:
         uses: Azure/k8s-deploy@v4
         with:
           manifests: |
-            api/deployment.yaml
-          images: ${{ env.acr-login-server }}/api:${{ github.sha }}
+            deployments/api.yaml
+            deployments/workers.yaml
+          images: |
+            ${{ env.acr-login-server }}/api:${{ github.sha }}
+            ${{ env.acr-login-server }}/worker:${{ github.sha }}
           pull-images: false

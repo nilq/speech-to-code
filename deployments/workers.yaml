@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: processing-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: processing-worker
+  template:
+    metadata:
+      labels:
+        app: processing-worker
+    spec:
+      containers:
+        - name: processing-worker
+          image: acrspeechtocode.azurecr.io/worker:latest
+          resources:
+            requests:
+              cpu: "2"
+              memory: "16Gi"
+            limits:
+              cpu: "3"
+              memory: "24Gi"
+          ports:
+            - containerPort: 8080
+
+      tolerations:
+        - key: "workload"
+          operator: "Equal"
+          value: "processing"
+          effect: "NoSchedule"
