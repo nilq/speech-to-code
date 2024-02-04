@@ -46,7 +46,7 @@ jobs:
           push: true
           tags: ${{ env.acr-login-server }}/worker:${{ github.sha }}
           file: worker/docker/Dockerfile
-          context: worker
+          context: ./
 
   deploy:
     name: "Deploy to Azure Kubernetes Service cluster"
