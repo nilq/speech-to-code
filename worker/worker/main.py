@@ -24,6 +24,12 @@ async def process_queue():
     queue_name = "speechprocessing"
     queue_client = queue_service_client.get_queue_client(queue_name)
 
+    print("QUEUE CLIENT")
+    print(queue_client)
+
+    print("CREDENTIAL")
+    print(credential)
+
     async with queue_client:
         while True:
             messages = await queue_client.receive_messages()
