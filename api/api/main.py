@@ -7,7 +7,7 @@ from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
 storage_account_url = "https://speech46c96a79acf72d79.blob.core.windows.net"
-blob_service_client = BlobServiceClient(credential=credential)
+blob_service_client = BlobServiceClient(account_url=storage_account_url, credential=credential)
 
 blob_client = blob_service_client.get_blob_client(container="content", blob="test")
 with open(__file__, "rb") as data:
