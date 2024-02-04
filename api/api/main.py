@@ -16,10 +16,12 @@ storage_queue_account_url = "https://speech46c96a79acf72d79.blob.core.windows.ne
 
 blob_service_client = BlobServiceClient(account_url=storage_blob_account_url, credential=credential)
 
+connection_string = "DefaultEndpointsProtocol=https;EndpointSuffix=core.windows.net;AccountName=speech46c96a79acf72d79;AccountKey=V2ti/mmKeneqq3WHGrDcFJ6kUEEK3lHVao8afNOsKXpmi07Gg5GGPdul94bh+EHsBWI7inPHcumG+ASt1c8BiQ==;BlobEndpoint=https://speech46c96a79acf72d79.blob.core.windows.net/;FileEndpoint=https://speech46c96a79acf72d79.file.core.windows.net/;QueueEndpoint=https://speech46c96a79acf72d79.queue.core.windows.net/;TableEndpoint=https://speech46c96a79acf72d79.table.core.windows.net/"
 
-queue_service_client = QueueServiceClient(account_url=storage_queue_account_url, credential=credential)
 queue_name = "speechprocessing"
+queue_service_client = QueueServiceClient.from_connection_string(conn_str=connection_string)
 queue_client = queue_service_client.get_queue_client(queue_name)
+
 
 app = FastAPI()
 
@@ -31,14 +33,6 @@ def random_audio_file_name() -> str:
 async def speak(audio: UploadFile = File(...)):
     if not audio.filename.endswith(".wav"):
         raise HTTPException(status_code=400, detail="Invalid file type. Only WAV files are accepted.")
-
-    try:
-        queue_client.create_queue()
-        print("CREATED QUEUE?")
-        queue_client.send_message("hello")
-        print("Sent hello.")
-    except Exception as e:
-        print("ERROR:", e)
 
     # Propagate speech to blob storage.
     blob_client = blob_service_client.get_blob_client(container="content", blob=f"{random_audio_file_name()}.wav")
