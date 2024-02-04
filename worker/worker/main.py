@@ -5,12 +5,16 @@ from azure.identity import DefaultAzureCredential
 from azure.storage.queue import QueueServiceClient
 
 import time
-
+import asyncio
 
 credential = DefaultAzureCredential(managed_identity_client_id="f1fa9ae3-9815-465f-8a41-26a731203e31")
 storage_account_url = "https://speech46c96a79acf72d79.blob.core.windows.net"
 blob_service_client = BlobServiceClient(account_url=storage_account_url, credential=credential)
 queue_service_client = QueueServiceClient(account_url=storage_account_url, credential=credential)
+
+blob_client = blob_service_client.get_blob_client(container="content", blob="testfromworker")
+with open(__file__, "rb") as data:
+    asyncio.run(blob_client.upload_blob(data))
 
 queue_name = "speechprocessing"
 queue_client = queue_service_client.get_queue_client(queue_name)

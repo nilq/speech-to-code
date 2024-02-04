@@ -29,7 +29,7 @@ async def speak(audio: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="Invalid file type. Only WAV files are accepted.")
 
     # Propagate speech to blob storage.
-    blob_client = blob_service_client.get_blob_client(container="speech", blob=random_audio_file_name)
+    blob_client = blob_service_client.get_blob_client(container="content", blob=random_audio_file_name)
 
     async with audio.file as file:
         await blob_client.upload_blob(file, blob_type="BlockBlob")
