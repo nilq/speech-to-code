@@ -16,6 +16,8 @@ queue_service_client = QueueServiceClient(account_url=storage_queue_account_url,
 def process_queue(queue_name: str = "speechprocessing"):
     queue_client = queue_service_client.get_queue_client(queue_name)
 
+    print("Listening to queue.")
+
     while True:
         messages = queue_client.receive_messages(max_messages=5)
         for message in messages.by_page():
