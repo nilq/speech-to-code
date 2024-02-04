@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: processing-worker
-          image: acrspeechtocode.azurecr.io/worker:latest
+          image: acrspeechtocode.azurecr.io/worker:2ce55859435a6b19d509cef9d0154ac34f8cd707
           resources:
             requests:
               cpu: "2"
@@ -22,9 +22,6 @@ spec:
             limits:
               cpu: "3"
               memory: "24Gi"
-          ports:
-            - containerPort: 8080
-
       tolerations:
         - key: "workload"
           operator: "Equal"

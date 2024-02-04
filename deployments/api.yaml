@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: speech-to-code
-          image: acrspeechtocode.azurecr.io/api:latest
+          image: acrspeechtocode.azurecr.io/api:2ce55859435a6b19d509cef9d0154ac34f8cd707
           ports:
             - containerPort: 8000
 ---

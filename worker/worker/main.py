@@ -4,7 +4,6 @@ from azure.storage.blob.aio import BlobServiceClient
 from azure.identity import DefaultAzureCredential
 from azure.storage.queue import QueueServiceClient
 
-import time
 import asyncio
 
 credential = DefaultAzureCredential(managed_identity_client_id="f1fa9ae3-9815-465f-8a41-26a731203e31")
@@ -16,16 +15,20 @@ blob_client = blob_service_client.get_blob_client(container="content", blob="tes
 with open(__file__, "rb") as data:
     asyncio.run(blob_client.upload_blob(data))
 
-queue_name = "speechprocessing"
-queue_client = queue_service_client.get_queue_client(queue_name)
+
+async def process_queue():
+    queue_name = "speechprocessing"
+    queue_client = queue_service_client.get_queue_client(queue_name)
+
+    async with queue_client:
+        while True:
+            messages = await queue_client.receive_messages()
+            for message in messages:
+                file_url = message.content
+                print(f"Received message: {file_url!r}")
+                await queue_client.delete_message(message)
+            await asyncio.sleep(1)
+
 
 def start() -> None:
-    while True:
-        messages = queue_client.receive_messages()
-
-        for message in messages:
-            file_url = message.content
-            print(f"Received message: {file_url!r}")
-            queue_client.delete_message(message)
-
-        time.sleep(1)
+    asyncio.run(process_queue())
