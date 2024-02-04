@@ -10,10 +10,14 @@ import uuid
 
 
 credential = DefaultAzureCredential(managed_identity_client_id="f1fa9ae3-9815-465f-8a41-26a731203e31")
-storage_account_url = "https://speech46c96a79acf72d79.blob.core.windows.net"
 
-blob_service_client = BlobServiceClient(account_url=storage_account_url, credential=credential)
-queue_service_client = QueueServiceClient(account_url=storage_account_url, credential=credential)
+storage_blob_account_url = "https://speech46c96a79acf72d79.blob.core.windows.net"
+storage_queue_account_url = "https://speech46c96a79acf72d79.blob.core.windows.net"
+
+blob_service_client = BlobServiceClient(account_url=storage_blob_account_url, credential=credential)
+
+
+queue_service_client = QueueServiceClient(account_url=storage_queue_account_url, credential=credential)
 
 queue_name = "speechprocessing"
 
@@ -28,15 +32,20 @@ async def speak(audio: UploadFile = File(...)):
     if not audio.filename.endswith(".wav"):
         raise HTTPException(status_code=400, detail="Invalid file type. Only WAV files are accepted.")
 
+    try:
+        queue_client = queue_service_client.get_queue_client(queue_name)
+        queue_client.send_message("hello")
+    except:
+        pass
+
     # Propagate speech to blob storage.
-    async with blob_service_client:
-        blob_client = blob_service_client.get_blob_client(container="content", blob=random_audio_file_name)
-        audio_file = await audio.read()
-        await blob_client.upload_blob(audio_file, blob_type="BlockBlob")
+    blob_client = blob_service_client.get_blob_client(container="content", blob=f"{random_audio_file_name()}.wav")
+    audio_file = await audio.read()
+    await blob_client.upload_blob(audio_file, blob_type="BlockBlob")
 
     # Send work message to queue.
     queue_client = queue_service_client.get_queue_client(queue_name)
-    await queue_client.send_message(blob_client.url)
+    queue_client.send_message(blob_client.url)
 
 
 @app.get("/health")
