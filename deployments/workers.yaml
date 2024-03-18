@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: processing-worker
-          image: acrspeechtocode.azurecr.io/worker:2ce55859435a6b19d509cef9d0154ac34f8cd707
+          image: acrspeechtocode.azurecr.io/worker:latest
           resources:
             requests:
               cpu: "2"
@@ -27,3 +27,16 @@ spec:
           operator: "Equal"
           value: "processing"
           effect: "NoSchedule"
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: processing-worker-scaler
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: processing-worker
+  minReplicas: 1
+  maxReplicas: 2
+  targetCPUUtilizationPercentage: 70

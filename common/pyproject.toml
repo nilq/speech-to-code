@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "common"
+version = "0.1.0"
+description = "Common functionality shared between API and worker."
+authors = ["Niels Horn <niels@horn.ninja>"]
+license = "MIT license"
+readme = "README.md"
+
+packages = [{include = "task"}]
+
+[tool.poetry.dependencies]
+python = "~3.11"
+pydantic = "^2.6.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

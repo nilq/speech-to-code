@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: speech-to-code
-          image: acrspeechtocode.azurecr.io/api:2ce55859435a6b19d509cef9d0154ac34f8cd707
+          image: acrspeechtocode.azurecr.io/api:latest
           ports:
             - containerPort: 8000
 ---
@@ -48,3 +48,17 @@ spec:
                 name: speech-to-code-service
                 port:
                   number: 80
+
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: api-scaler
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: speech-to-code
+  minReplicas: 2
+  maxReplicas: 4
+  targetCPUUtilizationPercentage: 70

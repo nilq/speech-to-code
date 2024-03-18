@@ -1,11 +1,11 @@
 [tool.poetry]
-name = "speech-to-code-api"
+name = "api"
 version = "0.1.0"
 description = "Speech-to-code API."
 authors = ["Niels Horn <niels@horn.ninja>"]
 license = "MIT license"
 readme = "README.md"
-packages = [{include = "api"}]
+packages = [{include="api"}]
 
 [tool.poetry.scripts]
 start = "api.main:start"
@@ -20,7 +20,9 @@ azure-storage-blob = "^12.19.0"
 aiohttp = "^3.9.3"
 asyncio = "^3.4.3"
 azure-storage-queue = "^12.9.0"
-
+common = {path = "../common"}
+azure-keyvault-secrets = "^4.7.0"
+azure-data-tables = "^12.5.0"
 
 [build-system]
 requires = ["poetry-core"]
